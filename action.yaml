@@ -1,0 +1,40 @@
+name: 'Setup k8s tools for Studist'
+description: 'Setup k8s tools for Studist'
+
+inputs:
+  kustomize:
+    description: 'Kustomize version'
+    required: true
+  conftest:
+    description: 'Conftest version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        KZ_PREFIX="$HOME/.cache/kz"
+        echo "KZ_PREFIX=$KZ_PREFIX" >> $GITHUB_ENV
+        echo "$KZ_PREFIX/bin" >> $GITHUB_PATH
+
+    - name: Install kz
+      shell: bash
+      run: |
+        curl -L https://raw.githubusercontent.com/corrupt952/kz/main/bin/kz -o kz
+        chmod u+x kz
+        mv kz /usr/local/bin
+
+    - name: Install kustomize
+      shell: bash
+      run: |
+        kz i ${{ inputs.kustomize }}
+        kustomize version
+
+    - name: Install conftest
+      shell: bash
+      run: |
+        wget -O /tmp/conftest.tar.gz https://github.com/instrumenta/conftest/releases/download/v${{ inputs.conftest }}/conftest_${{ inputs.conftest }}_Linux_x86_64.tar.gz
+        tar zxvf /tmp/conftest.tar.gz -C /tmp
+        mv /tmp/conftest /usr/local/bin
+        conftest --version
