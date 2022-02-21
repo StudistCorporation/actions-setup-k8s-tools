@@ -1,5 +1,6 @@
 name: 'Setup k8s tools for Studist'
 description: 'Setup k8s tools for Studist'
+author: 'Studist Corporation'
 
 inputs:
   kustomize:
